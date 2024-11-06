@@ -5,7 +5,6 @@ City of Restaurants is a platform that brings together multiple restaurants in o
 
 ## Features
 
-<h2>Features</h2>
 <ul>
   <li><strong>User Authentication</strong>: Secure sign-in and sign-up processes with encrypted passwords to ensure user data safety.</li>
   <li><strong>Restaurant Profiles</strong>: Detailed profiles for each restaurant, including images, menus, location, and operating hours.</li>
