@@ -30,12 +30,13 @@ City of Restaurants is a platform that brings together multiple restaurants in o
  
 ## Using  
 
- * JavaScript.
+ * TypeScript: For better type safety and a more structured, scalable codebase.
  * Express.js.
  * Helmet: Security middleware for securing HTTP headers.
  * Morgan: HTTP request logger for API requests.
  * DB ( MongoDB ).
  * ORM Mongoose.
+ * uuid
  * User Authentication: JWT-based authentication.
  * Authorization: Role-based access control for both users and admins.
  * File Upload: Using Multer.
@@ -44,67 +45,83 @@ City of Restaurants is a platform that brings together multiple restaurants in o
  * dotenv.
  * Cors: Enabled for secure handling of API requests.
 
+
 ## Collections
 
-* Users: Stores user information, including profiles, followers, and following relationships.
-* Posts: Contains shared content with descriptions, media, and associations to users.
-* Comments: Holds user comments on posts, linked to both the user and the post.
-* Auth: Manages user authentication, including registration and password management.
-* Shares: Tracks shared posts, allowing users to share content from others.
+The project uses several collections to store data related to users, restaurants, orders, and other essential information. Below are the key collections used in the City of Restaurants platform:
+
+- **Users**: Stores user details such as name, email, password, role (client, admin, vendor, driver), and order history.
+- **Restaurants**: Contains information about each restaurant, including the name, description, images, menu items, location, and operational hours.
+- **Orders**: Tracks customer orders, including the ordered food items, quantities, total price, payment method, and order status.
+- **Food Items**: Stores information about individual food items, including their names, descriptions, prices, and categories (e.g., fast food, vegan).
+- **Reviews**: Allows users to rate and review restaurants and food items.
+- **Categories**: Stores food categories such as "Fast Food," "Vegan," "Desserts," etc., for easy filtering and browsing.
+- **Shipping**: Includes information about the shipping address, including city, street, and phone number for order delivery.
+
+These collections allow for efficient and organized data management across the platform, providing users with a seamless experience when interacting with the City of Restaurants.
+
 
 ## API Endpoints
-### Auth APIs : 
+### Authentication
 
-1. `POST /auth/signUp`: Register a new user. This route includes middleware to check for email duplication and validate the input based on the provided schema.
-2. `POST /auth/signIn` : Authenticate a user and log them in.
-3. `PATCH /auth` : Change the authenticated user's password.
-
-### User APIs
-
-1. `PUT /users`: Update the authenticated user's details. This route requires user authentication.
-2. `DELETE /users/:id`: Delete a user by their ID. This route requires admin authorization.
-3. `GET /users/:id`: Retrieve a user by their ID. This route requires user authentication.
-4. `GET /users`: Retrieve all users. This route requires admin authorization.
-5. `PUT /users/:id/follow`: Follow a user by their ID. This route requires user authentication.
-6. `PUT /users/:id/unFollow`: Unfollow a user by their ID. This route requires user authentication.
-
-### Post APIs
-
-1. `POST /posts`: Create a new post. This route requires user authentication and allows uploading media files.
-2. `PUT /posts/:id`: Update an existing post by its ID. This route requires user authentication and allows uploading media files.
-3. `GET /posts`: Retrieve all posts.
-4. `GET /posts/:id`: Retrieve a specific post by its ID, including associated comments.
-5. `DELETE /posts/:id`: Delete a post by its ID. This route requires user authentication.
-6. `PUT /posts/:id/like`: Like a post by its ID. This route requires user authentication.
-7. `PUT /posts/:id/unlike`: Unlike a post by its ID. This route requires user authentication.
-8. `GET /posts/:id/likes`: Retrieve all likes for a specific post by its ID.
-9. `GET /posts/timeline/all`: Retrieve posts from users that the authenticated user follows. This route requires user authentication.
-
-### Comment APIs
-
-1. `POST /comments`: Create a new comment. This route requires user authentication and validates the input based on the provided schema.
-2. `GET /comments/:id`: Retrieve all comments for a specific post by its ID.
-3. `PATCH /comments/:id`: Update an existing comment by its ID. This route requires user authentication, and users can only modify their own comments.
-4. `DELETE /comments/:id`: Delete a comment by its ID. This route requires user authentication, and users can only delete their own comments.
+- **POST /signUp**: Registers a new user. Ensures the email is unique and the data is validated using `addUserSchema`.
+- **POST /signIn**: Authenticates a user with email and password. Returns a JWT token for further use.
+- **PATCH /**: Updates the user's password after validating the old password. Requires email and new password in the request body.
 
 
-### Share APIS
+### User Management
 
-1. `POST /share`: Share a post. This route requires user authentication to ensure that only authenticated users can share posts.
+- **GET /:id**: Fetches user profile by user ID. Requires authentication.
+- **PUT /**: Updates the user's profile. Accessible only to users with the role `client`.
+- **DELETE /:id**: Deletes a user account by user ID. Accessible only to users with the role `admin`.
+- **GET /**: Retrieves a list of all users. Accessible only to users with the role `admin`.
 
 
-## Deployment
+### Restaurant Management
 
-* MongoDB Atlas: Use MongoDB Atlas for a managed cloud database.
-* Vercel: Deploy the application on Vercel for easy hosting and management.
+- **POST /**: Creates a new restaurant. Requires authentication with `admin` role, and uploads files for the restaurant's logo and images.
+- **GET /**: Retrieves all restaurants.
+- **GET /one**: Fetches a single restaurant by name or ID. Requires authentication.
+- **PUT /:id**: Updates restaurant information by ID. Accessible to users with `vendor` or `admin` role.
+- **DELETE /:id**: Deletes a restaurant by ID. Accessible only to users with `admin` role.
+
+
+### Category Management
+
+- **POST /**: Creates a new category. Requires authentication with `admin` role and validation of category details.
+- **GET /**: Retrieves all categories.
+- **GET /one**: Fetches a single category by name or ID.
+- **PUT /:id**: Updates a category by ID. Accessible to users with `admin` role.
+- **DELETE /:id**: Deletes a category by ID. Accessible to users with `admin` role.
+
+### Food Management
+
+- **POST /**: Adds a new food item. Requires authentication with `admin` or `vendor` role, and allows file uploads for food images.
+- **GET /**: Retrieves all food items.
+- **GET /one**: Fetches a single food item by name or ID.
+- **GET /:restaurantId**: Fetches food items by restaurant ID.
+- **PUT /:id**: Updates a food item by ID. Accessible to users with `admin` or `vendor` role.
+- **DELETE /:id**: Deletes a food item by ID. Accessible to users with `admin` or `vendor` role.
+
+
+### Order Management
+
+- **POST /**: Creates a new order. Accessible to users with `client` role and validates order details.
+- **GET /**: Retrieves all orders. Accessible to users with `admin` or `vendor` roles.
+- **PATCH /:id**: Changes the status of an order by its ID. Accessible to users with `admin` or `vendor` roles.
+- **DELETE /:id**: Deletes an order by ID. Accessible to users with `admin` or `vendor` roles.
+
+
 
 ## Key Takeaways from this Project
 
-This project emphasizes user-centric design, ensuring a seamless experience for following, commenting, and sharing posts. It incorporates robust security measures with authentication and authorization, allowing users to access and modify only their content. Built with Node.js and MongoDB, the application is scalable and efficient, supporting media uploads through Multer for enhanced user engagement. The real-time updates on likes and comments improve interaction, while comprehensive input validation and error handling maintain data integrity. The modular structure simplifies maintenance and testing, showcasing best practices in modern web development.
+City of Restaurants is a platform that brings together multiple restaurants, allowing users to explore, order food, and track their orders. It offers secure user authentication, multi-role management (client, admin, vendor, driver), and detailed restaurant profiles with images and categorized menus. Users can choose payment methods, track orders in real-time, and manage their profiles. The platform ensures secure data handling and validation, leveraging technologies like TypeScript, JWT, and MongoDB for a seamless experience.
+
 
 ## Project Inspiration
 
-This project was inspired by the need for a platform that fosters community engagement and interaction in a digital space. Observing the success of existing social media platforms, I aimed to create a simplified yet effective solution that allows users to share their thoughts, connect with others, and express themselves through multimedia content. The desire to enhance user experience through real-time interactions and secure data handling further motivated the development of this social media app. The goal was to build a user-friendly environment that encourages authentic communication while prioritizing privacy and security.
+The idea for City of Restaurants stemmed from the need to simplify the process of discovering, ordering, and managing food from multiple restaurants in one place. With the growing demand for online food ordering, the goal was to create a platform that not only offers convenience and ease of use but also provides users with the ability to explore various cuisines, view detailed restaurant information, and track their orders in real-time. The project was inspired by the desire to improve the user experience and streamline restaurant services, bringing together restaurants, customers, and delivery services under one roof.
+
 
 
 
